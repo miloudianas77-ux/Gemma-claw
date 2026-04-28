@@ -1,20 +1,26 @@
 name: Build APK
-on: [push]
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip if needed
-        run: |
-          if [ -f GemmaClaw.zip ]; then unzip GemmaClaw.zip -d.; mv GemmaClaw/*. 2>/dev/null || true; fi
+      
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
+          
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        
       - name: Build Debug APK
-        run: chmod +x gradlew &&./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: assembleDebug
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: GemmaClaw-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/*.apk
