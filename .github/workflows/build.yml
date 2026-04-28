@@ -6,6 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Fix folder structure (Kimi upload puts files in subfolder)
+        run: |
+          if [ -d "Gemma-claw" ]; then mv Gemma-claw/* .; fi
+          if [ -d "GemmaClaw" ]; then mv GemmaClaw/* .; fi
+          ls -la
+      
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
